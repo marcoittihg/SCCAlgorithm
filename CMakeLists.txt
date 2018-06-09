@@ -3,4 +3,6 @@ project(SCCAlgorithm)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(SCCAlgorithm main.cpp SCCAlgorithm/StronglyConnectedComponents.cpp SCCAlgorithm/StronglyConnectedComponents.h)
+add_executable(SCCAlgorithm main.cpp SCCAlgorithm/StronglyConnectedComponents.cpp SCCAlgorithm/StronglyConnectedComponents.h Tests.h)
+
+
