@@ -5,6 +5,8 @@
 #ifndef SCCALGORITHM_STRONGLYCONNECTEDCOMPONENTS_H
 #define SCCALGORITHM_STRONGLYCONNECTEDCOMPONENTS_H
 
+#define SILENCE
+
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/depth_first_search.hpp>
 #include <boost/math/special_functions/round.hpp>
@@ -12,11 +14,12 @@
 #include <boost/array.hpp>
 #include <iostream>
 #include <stack>
+#include <mach/mach.h>
 
 namespace boost {
-    template<typename Graph, typename ComponentsMap>
+    template<typename Graph, typename ComponentsMap, typename CountType>
     inline typename boost::property_traits<ComponentsMap>::value_type
-    tarjanAlgorithm(Graph &g, ComponentsMap c, unsigned int nVertices) {
+    tarjanAlgorithm(Graph &g, ComponentsMap c, CountType nVertices) {
 
 #ifndef SILENCE
         std::cout << "\t The graph is directed -> Tarjan algorithm" << std::endl;
@@ -35,23 +38,22 @@ namespace boost {
             ComponentsMap c;
 
         private:
-            unsigned int index;
-            unsigned int nVertices;
+            CountType index;
+            CountType nVertices;
             boost::dynamic_bitset<> root;
-            unsigned int* rIndex;
-            IndexMap indexMap;
+            CountType* rIndex;
             std::stack<VertexType> iS, vS, S;
+            std::stack<OutDegree> oS;
 
         public:
-            TarjanExe(Graph &g, ComponentsMap c, unsigned int nVertices) : g(g), c(c), nVertices(nVertices) {
+            TarjanExe(Graph &g, ComponentsMap c, CountType nVertices) : g(g), c(c), nVertices(nVertices) {
                 count = Count(nVertices-1);
                 root = boost::dynamic_bitset<>(nVertices);
-                rIndex = new unsigned int[nVertices];
+                rIndex = new CountType[nVertices];
 
                 for (int i = 0; i < nVertices; ++i) { rIndex[i] = 0; }
 
                 index = 1;
-                indexMap = get(vertex_index, g);
             }
 
             inline void beginVisiting(VertexType v){
@@ -60,8 +62,11 @@ namespace boost {
 #endif
                 vS.push(v);
                 iS.push(0);
-                root[indexMap[v]] = true;
-                rIndex[indexMap[v]] = index;
+                oS.push(boost::out_degree(v, g));
+
+
+                root[v] = true;
+                rIndex[v] = index;
 
                 index++;
             }
@@ -71,8 +76,8 @@ namespace boost {
 
                 VertexType w = boost::target(*(iEdge.first + k), g);
 
-                if(rIndex[indexMap[w]] < rIndex[indexMap[v]]) {
-                    rIndex[indexMap[v]] = rIndex[indexMap[w]];
+                if(rIndex[w] < rIndex[v]) {
+                    rIndex[v] = rIndex[w];
                     root[v] = false;
                 }
             }
@@ -87,7 +92,7 @@ namespace boost {
                 std::cout << "\t\t\t Expand vertex: " << indexMap[v] <<" => "<< indexMap[w] <<std::endl;
 #endif
 
-                if(rIndex[indexMap[w]] == 0){
+                if(rIndex[w] == 0){
                     iS.pop();
                     iS.push(k + 1);
 
@@ -110,15 +115,16 @@ namespace boost {
 #endif
                 vS.pop();
                 iS.pop();
+                oS.pop();
 
-                if(root[indexMap[v]]){
+                if(root[v]){
 #ifndef SILENCE
                     std::cout << "\t\t\t Vertex: " << indexMap[v] << " is a root" <<std::endl;
 #endif
                     index--;
 
-                    while(!S.empty() && rIndex[indexMap[v]] <= rIndex[indexMap[S.top()]] ){
-                        rIndex[indexMap[S.top()]] = count;
+                    while(!S.empty() && rIndex[v] <= rIndex[S.top()] ){
+                        rIndex[S.top()] = count;
                         boost::put(c, S.top(), count);
 #ifndef SILENCE
                         std::cout << "\t\t\t\t -> Insert vertex: " << indexMap[S.top()] << " in component " << count <<std::endl;
@@ -127,7 +133,7 @@ namespace boost {
                         index--;
                     }
 
-                    rIndex[indexMap[v]] = count;
+                    rIndex[v] = count;
                     boost::put(c, v, count);
 #ifndef SILENCE
                     std::cout << "\t\t\t\t -> Insert vertex: " << indexMap[v] << " in component " << count <<std::endl;
@@ -147,7 +153,7 @@ namespace boost {
                 v = vS.top();
                 i = iS.top();
 
-                OutDegree outDegree = boost::out_degree(v, g);
+                OutDegree outDegree = oS.top();
 
                 while(i <= outDegree){
                     if (i > 0) finishEdge(v, i - 1);
@@ -177,7 +183,7 @@ namespace boost {
                 for(vp = boost::vertices(g); vp.first != vp.second; vp.first++) {
                     VertexType vert = *vp.first;
 
-                    if(rIndex[indexMap[vert]] == 0) {
+                    if(rIndex[vert] == 0) {
 #ifndef SILENCE
                         std::cout << "\t\t Visit vertex: " << indexMap[vert] <<std::endl;
 #endif
