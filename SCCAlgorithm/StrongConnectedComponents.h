@@ -43,33 +43,18 @@ namespace boost {
         std::cout << "\t The graph is directed -> Tarjan algorithm" << std::endl;
 #endif
         struct TarjanExe{
+        private:
             Count count;
             Graph &g;
             ComponentsMap c;    //OUT
             IndexMap indexMap;
-
-        private:
-
             Count index;
             Count nVertices;
-
             boost::dynamic_bitset<> root;
 
-            Count* rIndex;
-
             //Stacks to simulate recursion
-            std::stack<VertexType>  vS, S;
-            std::stack<OutDegree> iS;
-
-            //Contain the out degree of the nodes
-            std::stack<OutDegree> oS;
-
-            //Iterator over the forward star set
-            std::stack<outEdgeIter > itS;
-
-            //Previously not already finished edge
-            std::stack<VertexType> ovS;
-
+            std::stack<VertexType> vS, S;
+            std::stack<outEdgeIter> itS;
 
         public:
             TarjanExe(Graph &g, ComponentsMap c) : g(g), c(c) {
@@ -80,79 +65,68 @@ namespace boost {
 
                 count = Count(nVertices-1);
                 root = boost::dynamic_bitset<>(nVertices);
-                rIndex = new Count[nVertices];
 
-                for (int i = 0; i < nVertices; ++i) { rIndex[i] = 0; }
+                VertexIterator vi, vi_end;
+                for (boost::tie(vi, vi_end) = boost::vertices(g); vi != vi_end; ++vi){
+                    boost::put(c, *vi, 0);
+                }
 
                 index = 1;
             }
 
 
             inline void beginVisiting(VertexType v){
+                outEdgeIter itStart, itEnd;
+
+                while( boost::get(c, v) == 0 ){
 #ifndef SILENCE
-                std::cout << "\t\t\t Start visiting vertex " << indexMap[v] << std::endl;
+                    std::cout << "\t\t\t Start visiting vertex " << indexMap[v] << std::endl;
 #endif
-                vS.push(v);
-                iS.push(0);
-                oS.push(boost::out_degree(v, g));
-                itS.push(boost::out_edges(v, g).first);
-                VertexType ov;
-                ovS.push(ov);
 
-                root[indexMap[v]] = true;
-                rIndex[indexMap[v]] = index;
+                    boost::tie(itStart, itEnd) = boost::out_edges(v, g);
 
-                index++;
-            }
+                    itS.push(itStart);
+                    vS.push(v);
 
-            inline void finishEdge(VertexType v, VertexType w){
-                if(rIndex[indexMap[w]] < rIndex[indexMap[v]]) {
-                    rIndex[indexMap[v]] = rIndex[indexMap[w]];
-                    root[indexMap[v]] = false;
+                    root[indexMap[v]] = true;
+                    boost::put(c, v, index);
+
+                    index++;
+
+                    if(itStart != itEnd)
+                        v = boost::target( *itStart, g);
+                    else
+                        return;
                 }
             }
 
-            inline bool beginEdge(VertexType v, outEdgeIter k){
+
+            inline bool beginEdge(VertexType v, outEdgeIter k) {
                 VertexType w = boost::target(*k, g);
 
 #ifndef SILENCE
                 std::cout << "\t\t\t Expand vertex: " <<  indexMap[v] <<" => "<< indexMap[w] <<std::endl;
 #endif
 
-                if(rIndex[indexMap[w]] == 0){
+                if(boost::get(c, w) == 0){
 #ifndef SILENCE
                     std::cout << "\t\t\t vertex: " << indexMap[w] <<" not already visited " <<std::endl;
 #endif
-                    OutDegree i = iS.top();
-                    iS.pop();
-                    iS.push(i + 1);
-
-                    ovS.pop();
-                    ovS.push(w);
-
-                    k++;
-                    itS.pop();
-                    itS.push(k);
 
                     beginVisiting(w);
                     return true;
-                }else {
+
+                } else {
 #ifndef SILENCE
                     std::cout << "\t\t\t vertex: " << indexMap[w] <<" already visited " <<std::endl;
 #endif
                     return false;
                 }
             }
-
             inline void finishVisiting(VertexType v){
-#ifndef SILENCE
-                std::cout << "\t\t\t Finish visiting vertex: " << indexMap[v] <<std::endl;
-#endif
-                vS.pop();
-                iS.pop();
-                oS.pop();
                 itS.pop();
-                ovS.pop();
+                vS.pop();
+
 
                 if(root[indexMap[v]]){
 #ifndef SILENCE
@@ -160,8 +134,7 @@ namespace boost {
 #endif
                     index--;
 
-                    while(!S.empty() && rIndex[indexMap[v]] <= rIndex[indexMap[S.top()]] ){
-                        rIndex[indexMap[S.top()]] = count;
+                    while(!S.empty() && boost::get(c, v) <= boost::get(c, S.top()) ){
 
                         boost::put(c, S.top(), count);
 #ifndef SILENCE
@@ -171,15 +144,13 @@ namespace boost {
                         index--;
                     }
 
-                    rIndex[indexMap[v]] = count;
-
                     boost::put(c, v, count);
 
 #ifndef SILENCE
                     std::cout << "\t\t\t\t -> Insert vertex: " << indexMap[v] << " in component " << count <<std::endl;
 #endif
                     count--;
-                }else{
+                } else {
 #ifndef SILENCE
                     std::cout << "\t\t\t Vertex: " << indexMap[v] << " is not a root" <<std::endl;
 #endif
@@ -187,40 +158,36 @@ namespace boost {
                 }
             }
 
+            inline void finishEdge(VertexType v, VertexType w){
+                Count rIndexV = boost::get(c, v);
+                Count rIndexW = boost::get(c, w);
+
+                if(rIndexW < rIndexV) {
+                    boost::put(c, v, rIndexW);
+                    root[indexMap[v]] = false;
+                }
+            }
 
             inline void visitLoop(){
-                VertexType v;
-                OutDegree i;
+                VertexType v, ve;
                 outEdgeIter it;
-                VertexType ov;
 
                 v = vS.top();
-                i = iS.top();
                 it = itS.top();
-                ov = ovS.top();
 
-                OutDegree outDegree = oS.top();
+                outEdgeIter itStart, itEnd;
+                boost::tie(itStart, itEnd) = boost::out_edges(v, g);
 
-                while(i <= outDegree){
-                    if (i > 0) {
-                        finishEdge(v, ov);
-                    }
+                while(it != itEnd){
+                    ve = boost::target(*it, g);
+                    finishEdge(v, ve);
 
-                    if (i < outDegree && beginEdge(v, it)){
+                    it++;
+                    itS.pop();
+                    itS.push(it);
+
+                    if(it != itEnd && beginEdge(v, it))
                         return;
-                    }
-
-                    i++;
-                    iS.pop();
-                    iS.push(i);
-
-                    if(i <= outDegree) {
-                        ov = boost::target(*it, g);
-                        ovS.pop();
-                        ovS.push(ov);
-
-                        it++;
-                    }
                 }
 
                 finishVisiting(v);
@@ -244,7 +211,7 @@ namespace boost {
                 for(vp = boost::vertices(g); vp.first != vp.second; vp.first++) {
                     VertexType vert = *vp.first;
 
-                    if(rIndex[indexMap[vert]] == 0) {
+                    if(boost::get(c, vert) == 0) {
 #ifndef SILENCE
                         std::cout << "\t\t Visit vertex: " << indexMap[vert] <<std::endl;
 #endif
@@ -256,7 +223,6 @@ namespace boost {
                     }
                 }
 
-                delete[] rIndex;
                 return count;
             }
 
