@@ -20,10 +20,12 @@ The algorithm has ben slightly modified to support all the containers for *adjac
 
 ##### Performances
 - Time: Similar to the BGL implementation, on average the new algorithm run 5.2% faster than the BGL implementation on test samples;
-![Time Pearce](Images/TimePearce.png)
+![Time Pearce](/Images/TimePearce.png)
 
 - Space: The new algorithm use less memory than the BGL implementation
+BGL Algorithm
 ![Space BGL](Images/SpaceBGL.png)
+Pearce Implementation
 ![Space Pearce](Images/SpacePearce.png)
 
 ##### Bottleneck
