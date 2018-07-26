@@ -93,7 +93,6 @@ namespace boost {
                 std::cout << "\t Start visiting vertex " << indexMap[v] << std::endl;
 #endif
                 unsigned int vIndex = indexMap[v];
-
                 root[vIndex] = v;
                 inComponent[vIndex] = false;
                 visitIndex[vIndex] = index;
@@ -103,14 +102,11 @@ namespace boost {
 
             void finish_edge(EdgeType e,
                              const Graph& g){
-
                 VertexType v = boost::source(e, g);
                 VertexType w = boost::target(e, g);
-
 #ifndef SILENCE
                 std::cout << "\t Finished edge " << indexMap[v] << " => " << indexMap[w] << std::endl;
 #endif
-
                 VertexType rootW = root[indexMap[w]];
 
                 if(!inComponent[indexMap[rootW]]){
@@ -140,17 +136,13 @@ namespace boost {
             void finish_vertex(VertexType v,
                                const Graph& g){
                 unsigned int vIndex = indexMap[v];
-
 #ifndef SILENCE
                 std::cout << "\t Finished vertex " << vIndex << std::endl;
 #endif
-
                 if(root[vIndex] == v){
-
 #ifndef SILENCE
                     std::cout << "\t\t Vertex " << vIndex << " is a root vertex" << std::endl;
 #endif
-
                     rootCounter += 1;
 
                     VertexType sTop;
@@ -208,7 +200,6 @@ namespace boost {
         boost::depth_first_search(g, boost::visitor(nuutilaDFSVisitor));
 
         nuutilaDFSVisitor.clearMemory();
-
 
         IndexMap indexMap = boost::get(vertex_index, g);
 
