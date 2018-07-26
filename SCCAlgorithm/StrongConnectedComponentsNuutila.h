@@ -54,6 +54,8 @@ namespace boost {
             Count index;
             Count nVertices;
 
+            Count rootCounter;
+
             VertexType* root;
             Count* visitIndex;
 
@@ -62,13 +64,17 @@ namespace boost {
             std::vector<VertexType> S;
 
             std::set<int> setS;
+
         public:
+
             NuutilaDFSVisitor(Graph &g, VertexType* root) : g(g), root(root) {
                 nVertices = boost::num_vertices(g);
 
                 indexMap = get(vertex_index, g);
 
                 count = Count(nVertices-1);
+
+                rootCounter = Count(0);
 
                 inComponent = boost::dynamic_bitset<>(nVertices);
                 for (int j = 0; j < nVertices; ++j) {
@@ -145,6 +151,8 @@ namespace boost {
                     std::cout << "\t\t Vertex " << vIndex << " is a root vertex" << std::endl;
 #endif
 
+                    rootCounter += 1;
+
                     VertexType sTop;
                     Count vVIndex;
 
@@ -170,20 +178,6 @@ namespace boost {
 #endif
                     VertexType rootV = root[vIndex];
 
-                    /*bool found = false;
-
-                    if(S.size() > maxSize){
-                        maxSize = S.size();
-                        std::cout<<maxSize<<std::endl;
-                    }
-
-                    for (auto i = S.rbegin(); i != S.rend(); ++i) {
-                        if(rootV == *i){
-                            found = true;
-                            break;
-                        }
-                    }*/
-
                     if(setS.find(indexMap[rootV]) == setS.end()) {
 #ifndef SILENCE
                         std::cout << "\t\t\t Root of vertex " << vIndex << " ("<<indexMap[rootV]<<") pushed onto the stack" << std::endl;
@@ -201,6 +195,12 @@ namespace boost {
 
             void clearMemory(){
                 delete[] visitIndex;
+
+                S.clear();
+            }
+
+            Count getRootCounter(){
+                return rootCounter;
             }
 
         } nuutilaDFSVisitor(g,root);
@@ -220,8 +220,7 @@ namespace boost {
 
         delete[] root;
 
-        return 0;
-
+        return nuutilaDFSVisitor.getRootCounter();
     };
 }
 
