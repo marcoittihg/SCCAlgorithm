@@ -12,6 +12,10 @@
 #include <iostream>
 #include <stack>
 
+#include <mach/mach.h>
+
+vm_size_t maxMemSize;
+
 namespace boost {
     template<typename Graph, typename ComponentsMap>
     inline typename boost::property_traits<ComponentsMap>::value_type
@@ -37,11 +41,7 @@ namespace boost {
         typedef typename boost::graph_traits<Graph>::degree_size_type OutDegree;
         typedef typename boost::graph_traits<Graph>::out_edge_iterator outEdgeIter;
         typedef typename boost::property_map<Graph, boost::vertex_index_t >::type IndexMap;
-
-
-#ifndef SILENCE
-        std::cout << "\t The graph is directed -> Tarjan algorithm" << std::endl;
-#endif
+        
         struct TarjanExe{
         private:
             Count count;
@@ -124,6 +124,22 @@ namespace boost {
                 }
             }
             inline void finishVisiting(VertexType v){
+
+                struct task_basic_info t_info;
+                mach_msg_type_number_t t_info_count = TASK_BASIC_INFO_COUNT;
+
+                if (KERN_SUCCESS != task_info(mach_task_self(),
+                                              TASK_BASIC_INFO, (task_info_t) &t_info,
+                                              &t_info_count)) {
+                    std::cout << "Something wrong happened" << std::endl;
+                    return;
+                }
+                vm_size_t newMemSize = t_info.resident_size / 1024 / 1024;
+
+                if (newMemSize > maxMemSize)
+                    maxMemSize = newMemSize;
+
+
                 itS.pop();
                 vS.pop();
 
