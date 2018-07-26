@@ -18,9 +18,10 @@ set (Boost_USE_MULTITHREAD ON)
 #include_directories(${Boost_INCLUDE_DIR})
 
 
-add_executable(SCCAlgorithm main.cpp SCCAlgorithm/StrongConnectedComponents.h)
+add_executable(SCCAlgorithm main.cpp SCCAlgorithm/StrongConnectedComponents.h SCCAlgorithm/StrongConnectedComponentsNuutila.h)
 
 add_executable(Testing SCCAlgorithmTesting/Testing.cpp)
+add_executable(TestingNuutila SCCAlgorithmTesting/TestingNuutila.cpp)
 
 IF(CMAKE_BUILD_TYPE MATCHES Release)
     target_compile_definitions(SCCAlgorithm PRIVATE SILENCE)
