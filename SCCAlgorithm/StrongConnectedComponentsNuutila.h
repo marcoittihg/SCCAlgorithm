@@ -19,6 +19,8 @@
 #include <mach/mach.h>
 vm_size_t maxMemSize;
 
+unsigned long maxSize = 0;
+
 namespace boost {
     template<typename Graph, typename ComponentsMap>
     inline typename boost::property_traits<ComponentsMap>::value_type
@@ -59,6 +61,7 @@ namespace boost {
 
             std::vector<VertexType> S;
 
+            std::set<int> setS;
         public:
             NuutilaDFSVisitor(Graph &g, VertexType* root) : g(g), root(root) {
                 nVertices = boost::num_vertices(g);
@@ -78,7 +81,7 @@ namespace boost {
             }
 
             void discover_vertex(VertexType v,
-                               const Graph& g){
+                                 const Graph& g){
 
 #ifndef SILENCE
                 std::cout << "\t Start visiting vertex " << indexMap[v] << std::endl;
@@ -129,7 +132,7 @@ namespace boost {
             }
 
             void finish_vertex(VertexType v,
-                             const Graph& g){
+                               const Graph& g){
                 unsigned int vIndex = indexMap[v];
 
 #ifndef SILENCE
@@ -144,21 +147,18 @@ namespace boost {
 
                     VertexType sTop;
                     Count vVIndex;
-                    bool sEmpty = S.empty();
 
                     vVIndex = visitIndex[vIndex];
 
-                    if(!sEmpty){
-                        sTop = S.back();
-                    }
-
-                    if(!sEmpty && visitIndex[indexMap[sTop]] >= vVIndex){
+                    if(!S.empty() && visitIndex[indexMap[S.back()]] >= vVIndex){
                         do{
+                            sTop = S.back();
+                            setS.erase(indexMap[sTop]);
+
                             S.pop_back();
 
                             inComponent[indexMap[sTop]] = true;
 
-                            sTop = S.back();
 
                         }while(!S.empty() && visitIndex[indexMap[sTop]] >= vVIndex);
                     }else{
@@ -169,21 +169,27 @@ namespace boost {
                     std::cout << "\t\t Vertex " << vIndex << " is not a root vertex" << std::endl;
 #endif
                     VertexType rootV = root[vIndex];
-                    
-                    bool found = false;
+
+                    /*bool found = false;
+
+                    if(S.size() > maxSize){
+                        maxSize = S.size();
+                        std::cout<<maxSize<<std::endl;
+                    }
 
                     for (auto i = S.rbegin(); i != S.rend(); ++i) {
                         if(rootV == *i){
                             found = true;
                             break;
                         }
-                    }
+                    }*/
 
-                    if(!found) {
+                    if(setS.find(indexMap[rootV]) == setS.end()) {
 #ifndef SILENCE
                         std::cout << "\t\t\t Root of vertex " << vIndex << " ("<<indexMap[rootV]<<") pushed onto the stack" << std::endl;
 #endif
                         S.push_back(rootV);
+                        setS.insert(indexMap[rootV]);
 
                     }else{
 #ifndef SILENCE
