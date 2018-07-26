@@ -23,6 +23,4 @@ add_executable(SCCAlgorithm main.cpp SCCAlgorithm/StrongConnectedComponents.h SC
 add_executable(Testing SCCAlgorithmTesting/Testing.cpp)
 add_executable(TestingNuutila SCCAlgorithmTesting/TestingNuutila.cpp)
 
-IF(CMAKE_BUILD_TYPE MATCHES Release)
     target_compile_definitions(SCCAlgorithm PRIVATE SILENCE)
-ENDIF(CMAKE_BUILD_TYPE MATCHES Release)

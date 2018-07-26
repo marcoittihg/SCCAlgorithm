@@ -94,7 +94,6 @@ void generateSamplesTime(){
 
         typedef typename boost::graph_traits<Graph>::vertices_size_type V;
         typedef typename boost::graph_traits<Graph>::edges_size_type E;
-
         typedef typename boost::graph_traits<Graph>::vertex_descriptor VertexType;
 
         std::map<VertexType, int> map;
@@ -127,7 +126,7 @@ void generateSamplesTime(){
 
         boost::timer::nanosecond_type outTime = t.elapsed().user + t.elapsed().system;
 
-        outF << v << " " << e << " " << outTime / 1000 << std::endl;
+        outF << v << " " << e << " " << outTime / 1000000 << std::endl;
 
         outF.flush();
         outF.close();
