@@ -6,7 +6,7 @@ C++ Implementation of some algorithms for finding the Strongly Connected Compone
 
 For a directed graph D = (V, E), a Strongly Connected Component (SCC) is a maximal induced subgraph S = (VS, ES) where, for every (x, y) ∈VS, there is a path from x to y (and vice-versa).
 
-![Strong Components](Images/IntroStrongComponents.png)
+![Strong Components](/Images/IntroStrongComponents.png)
 
 ## Algorithms
 
