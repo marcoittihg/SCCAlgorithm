@@ -4,9 +4,9 @@ Project for the Advanced Algorithm and Parallel Programming course Polimi 2018.
 
 C++ Implementation of some algorithms for finding the Strongly Connected Components (SCCs) in a directed graph that fit into the main memory.
 
-For a directed graph D = (V, E), a Strongly Connected Component (SCC) is a maximal induced subgraph S = (VS, ES) where, for every (x, y) ∈VS, there is a path from x to y (and vice-versa).
+For a directed graph D = (V, E), a Strongly Connected Component (SCC) is a maximal induced subgraph S = (V, E) where, for every (x, y) ∈ V, there is a path from x to y (and vice-versa).
 
-![Strong Components](/Images/IntroStrongComponents.png)
+![Strong Components](/Images/IntroStrongConnectedComponents.png)
 
 ## Algorithms
 
@@ -50,7 +50,6 @@ Recursive algorithm that lower the required memory of the Tarjan algorithm by av
 
 ##### Bottleneck
 Execution of the DFS with the DFSVisitor (80% of the time); for better time performance simulate the recursion with two stacks as for Pearce.
-
 
 ## Known Issues
 - Not able to define a GBL graph as *adjacency_list* and multimapS as container for *outEdgeList*
