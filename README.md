@@ -6,7 +6,7 @@ C++ Implementation of some algorithms for finding the Strongly Connected Compone
 
 For a directed graph D = (V, E), a Strongly Connected Component (SCC) is a maximal induced subgraph S = (V, E) where, for every (x, y) ∈ V, there is a path from x to y (and vice-versa).
 
-![Strong Components](/Images/IntroStrongConnectedComponents.png)
+![Strong Components](/Images/IntroStrongConnectedComponents.png){ width : 60%; }
 
 ## Algorithms
 
@@ -23,8 +23,10 @@ The algorithm has ben slightly modified to support all the containers for *adjac
 ![Time Pearce](/Images/TimePearce.png)
 
 - Space: The new algorithm use less memory than the BGL implementation
+
 BGL Algorithm
 ![Space BGL](Images/SpaceBGL.png)
+
 Pearce Implementation
 ![Space Pearce](Images/SpacePearce.png)
 
