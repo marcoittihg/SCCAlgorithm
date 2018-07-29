@@ -37,22 +37,22 @@ Recursive algorithm that lower the required memory of the Tarjan algorithm by av
 Execution of the DFS with the DFSVisitor (80% of the time); for better time performance simulate the recursion with two stacks as for Pearce.
 
 # Performances:
-Performances evaluated with adjacency_list and VecS as OutEdgeList and VertexList
+Performances evaluated with adjacency_list and VecS as OutEdgeList and VertexList.
 
 - **Pearce**:
-    - Time: Similar to the BGL implementation, on average the new algorithm run 5.2% faster than the BGL implementation on test samples;
+    - Time: Similar to the BGL implementation, on average the new algorithm run 5.2% faster than the BGL implementation on test samples.
     ![Time Pearce](/Images/TimePearce.jpg)
     ![Time Pearce 2D](/Images/TimePearce2D.jpg)
 
-    - Space: The implementation use far less memory than the BGL implementation and similar memory to the Nuutila implementation
+    - Space: The implementation use far less memory than the BGL implementation and similar memory to the Nuutila implementation.
     ![Space Pearce](Images/SpacePearce.png)
 
 - **Nuutila**:
-    - Time: Significantly faster than the BGL implementation
+    - Time: Significantly faster than the BGL implementation.
     ![Time Nuutila](/Images/TimeNuutila.jpg)
     ![Time Nuutila 2D](/Images/TimeNuutila2D.jpg)
 
-    - Space: Similar memory consumption to the pearce implementation
+    - Space: Similar memory consumption to the pearce implementation.
     ![Space Nuutila](Images/SpaceNuutila.jpg)
 
 - **BGL Implementation**:
@@ -64,4 +64,4 @@ Performances evaluated with adjacency_list and VecS as OutEdgeList and VertexLis
     ![Space BGL](/Images/SpaceBGL.png)
 
 ## Known Issues
-- Not able to define a GBL graph as *adjacency_list* and multimapS as container for *outEdgeList*.
+- No test to check *adjacency_list* and multimapS as container for *OutEdgeList*
