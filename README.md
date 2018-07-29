@@ -40,19 +40,19 @@ Execution of the DFS with the DFSVisitor (80% of the time); for better time perf
 
 - Pearce:
     - Time: Similar to the BGL implementation, on average the new algorithm run 5.2% faster than the BGL implementation on test samples;
-    ![Time Pearce](/Images/TimePearce.png)
-    ![Time Pearce 2D](/Images/TimePearce2D.png)
+    ![Time Pearce](/Images/TimePearce.jpg)
+    ![Time Pearce 2D](/Images/TimePearce2D.jpg)
 
     - Space: The implementation use far less memory than the BGL implementation and similar memory to the Nuutila implementation
     ![Space Pearce](Images/SpacePearce.png)
 
 - Nuutila:
     - Time: Significantly faster than the BGL implementation
-    ![Time Nuutila](/Images/TimeNuutila.png)
-    ![Time Nuutila 2D](/Images/TimeNuutila2D.png)
+    ![Time Nuutila](/Images/TimeNuutila.jpg)
+    ![Time Nuutila 2D](/Images/TimeNuutila2D.jpg)
 
     - Space: Similar memory consumption to the pearce implementation
-    ![Space Nuutila](Images/SpaceNuutila.png)
+    ![Space Nuutila](Images/SpaceNuutila.jpg)
 
 - BGL Implementation:
     - Time:
