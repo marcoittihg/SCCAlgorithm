@@ -16,11 +16,6 @@
 #include <stack>
 #include <iostream>
 
-#include <mach/mach.h>
-vm_size_t maxMemSize;
-
-unsigned long maxSize = 0;
-
 namespace boost {
     template<typename Graph, typename ComponentsMap>
     inline typename boost::property_traits<ComponentsMap>::value_type
@@ -62,7 +57,6 @@ namespace boost {
             boost::dynamic_bitset<> inComponent;
 
             std::vector<VertexType> S;
-
             std::set<int> setS;
 
         public:
@@ -143,6 +137,7 @@ namespace boost {
 #ifndef SILENCE
                     std::cout << "\t\t Vertex " << vIndex << " is a root vertex" << std::endl;
 #endif
+
                     rootCounter += 1;
 
                     VertexType sTop;
@@ -208,7 +203,6 @@ namespace boost {
         for (boost::tie(vi, vi_end) = vertices(g); vi != vi_end; ++vi){
             boost::put(c, *vi, indexMap[root[indexMap[*vi]]]);
         }
-
         delete[] root;
 
         return nuutilaDFSVisitor.getRootCounter();
